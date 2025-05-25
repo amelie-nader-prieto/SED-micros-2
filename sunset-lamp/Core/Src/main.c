@@ -31,7 +31,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define CANAL_R TIM_CHANNEL_1 //rojo
+#define CANAL_G TIM_CHANNEL_2 //verde
+#define CANAL_B TIM_CHANNEL_3 // azul
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -92,9 +94,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   //HAL_TIM_PWM_Init(&htim1);
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim1, CANAL_R);
+  HAL_TIM_PWM_Start(&htim1, CANAL_G);
+  HAL_TIM_PWM_Start(&htim1, CANAL_B);
   __HAL_TIM_MOE_ENABLE(&htim1);
 
   /* USER CODE END 2 */
@@ -105,9 +107,9 @@ int main(void)
   {
 	  //__HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,0);
 	  //HAL_Delay(1000);
-	  __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,500);
-	  __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_2,600);
-	  __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_3,700);
+	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_R,600);
+	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_G,600);
+	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_B,600);
 	  HAL_Delay(5000);
 	  //__HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,990);
 	  //HAL_Delay(5000);

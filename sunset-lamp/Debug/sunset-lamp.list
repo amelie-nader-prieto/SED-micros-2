@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  0000400c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   000082a9  00000000  00000000  0000403c  2**0
+ 12 .debug_info   000082aa  00000000  00000000  0000403c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00001513  00000000  00000000  0000c2e5  2**0
+ 13 .debug_abbrev 00001513  00000000  00000000  0000c2e6  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000960  00000000  00000000  0000d7f8  2**3
+ 14 .debug_aranges 00000960  00000000  00000000  0000d800  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 0000073b  00000000  00000000  0000e158  2**0
+ 15 .debug_rnglists 0000073b  00000000  00000000  0000e160  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  000150e5  00000000  00000000  0000e893  2**0
+ 16 .debug_macro  000150f7  00000000  00000000  0000e89b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00009ffa  00000000  00000000  00023978  2**0
+ 17 .debug_line   00009ffa  00000000  00000000  00023992  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00087e14  00000000  00000000  0002d972  2**0
+ 18 .debug_str    00087e56  00000000  00000000  0002d98c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000b5786  2**0
+ 19 .comment      00000043  00000000  00000000  000b57e2  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00002710  00000000  00000000  000b57cc  2**2
+ 20 .debug_frame  00002710  00000000  00000000  000b5828  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000068  00000000  00000000  000b7edc  2**0
+ 21 .debug_line_str 00000068  00000000  00000000  000b7f38  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -379,15 +379,15 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   //HAL_TIM_PWM_Init(&htim1);
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1, CANAL_R);
  80004dc:	2100      	movs	r1, #0
  80004de:	4814      	ldr	r0, [pc, #80]	@ (8000530 <main+0x68>)
  80004e0:	f001 fa64 	bl	80019ac <HAL_TIM_PWM_Start>
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim1, CANAL_G);
  80004e4:	2104      	movs	r1, #4
  80004e6:	4812      	ldr	r0, [pc, #72]	@ (8000530 <main+0x68>)
  80004e8:	f001 fa60 	bl	80019ac <HAL_TIM_PWM_Start>
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim1, CANAL_B);
  80004ec:	2108      	movs	r1, #8
  80004ee:	4810      	ldr	r0, [pc, #64]	@ (8000530 <main+0x68>)
  80004f0:	f001 fa5c 	bl	80019ac <HAL_TIM_PWM_Start>
@@ -404,25 +404,25 @@ int main(void)
   {
 	  //__HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,0);
 	  //HAL_Delay(1000);
-	  __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,500);
+	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_R,600);
  8000504:	4b0a      	ldr	r3, [pc, #40]	@ (8000530 <main+0x68>)
  8000506:	681b      	ldr	r3, [r3, #0]
- 8000508:	f44f 72fa 	mov.w	r2, #500	@ 0x1f4
+ 8000508:	f44f 7216 	mov.w	r2, #600	@ 0x258
  800050c:	635a      	str	r2, [r3, #52]	@ 0x34
-	  __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_2,600);
+	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_G,600);
  800050e:	4b08      	ldr	r3, [pc, #32]	@ (8000530 <main+0x68>)
  8000510:	681b      	ldr	r3, [r3, #0]
  8000512:	f44f 7216 	mov.w	r2, #600	@ 0x258
  8000516:	639a      	str	r2, [r3, #56]	@ 0x38
-	  __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_3,700);
+	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_B,600);
  8000518:	4b05      	ldr	r3, [pc, #20]	@ (8000530 <main+0x68>)
  800051a:	681b      	ldr	r3, [r3, #0]
- 800051c:	f44f 722f 	mov.w	r2, #700	@ 0x2bc
+ 800051c:	f44f 7216 	mov.w	r2, #600	@ 0x258
  8000520:	63da      	str	r2, [r3, #60]	@ 0x3c
 	  HAL_Delay(5000);
  8000522:	f241 3088 	movw	r0, #5000	@ 0x1388
  8000526:	f000 faa7 	bl	8000a78 <HAL_Delay>
-	  __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,500);
+	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_R,600);
  800052a:	bf00      	nop
  800052c:	e7ea      	b.n	8000504 <main+0x3c>
  800052e:	bf00      	nop
