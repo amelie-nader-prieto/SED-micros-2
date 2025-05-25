@@ -54,3 +54,28 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\LENOVO\Docume
 
 !ENTRY org.eclipse.cdt.core 1 0 2025-05-25 15:07:51.235
 !MESSAGE Indexed 'sunset-lamp' (21 sources, 118 headers) in 3.4 sec: 11,950 declarations; 55,927 references; 1 unresolved inclusions; 92 syntax errors; 240 unresolved names (0.35%)
+!SESSION 2025-05-25 15:16:43.532 -----------------------------------------------
+eclipse.buildId=Version 1.16.1
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=es_ES
+Framework arguments:  C:\Users\LENOVO\Documents\GitHub\SED-micros-2\sunset-lamp\.project
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\LENOVO\Documents\GitHub\SED-micros-2\sunset-lamp\.project
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2025-05-25 15:16:49.272
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2025-05-25 15:16:49.273
+!MESSAGE Log4j2 initialized with config file C:\Users\LENOVO\Documents\GitHub\SED-micros-2\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2025-05-25 15:16:58.727
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2025-05-25 15:17:02.274
+!MESSAGE Indexed 'sunset-lamp' (21 sources, 118 headers) in 3.1 sec: 11,950 declarations; 55,933 references; 1 unresolved inclusions; 92 syntax errors; 240 unresolved names (0.35%)
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2025-05-25 15:41:57.497
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.gdb.internal.ui.actions.DsfTerminateCommand$3$1@26c9a1e0): Status OK: unknown code=0 OK' resulted in a rejected execution exception.
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2025-05-25 16:51:12.681
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.gdb.internal.ui.actions.DsfTerminateCommand$3$1@2bed743e): Status OK: unknown code=0 OK' resulted in a rejected execution exception.
