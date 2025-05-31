@@ -50,8 +50,12 @@ ADC_HandleTypeDef hadc1;
 TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN PV */
-volatile uint32_t brillo = 0;
-volatile uint32_t brillo_raw = 0;
+volatile uint32_t pot1_scale = 0;
+volatile uint32_t pot1_raw = 0;
+volatile uint32_t brillo_R = 666;
+volatile uint32_t brillo_G = 666;
+volatile uint32_t brillo_B = 666;
+volatile float factor_brillo = 0.0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -61,18 +65,18 @@ static void MX_TIM1_Init(void);
 static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
 uint32_t scale(uint32_t raw){
-	return (uint32_t)((raw*MAX_PWM)/MAX_ADC);
+	return (uint32_t)((raw*MAX_PWM))/MAX_ADC;
 }
-uint32_t leer_adc1(){
+uint32_t leer_adc(ADC_HandleTypeDef* _hadc){
 
-	HAL_ADC_Start(&hadc1);
-	if(HAL_ADC_PollForConversion(&hadc1, 100) == HAL_OK){
-		//return HAL_ADC_GetValue(&hadc1);
-		uint32_t raw = HAL_ADC_GetValue(&hadc1);
-		HAL_ADC_Stop(&hadc1);
+	HAL_ADC_Start(_hadc);
+	if(HAL_ADC_PollForConversion(_hadc, 100) == HAL_OK){
+		return HAL_ADC_GetValue(_hadc);
+		uint32_t raw = HAL_ADC_GetValue(_hadc);
+		HAL_ADC_Stop(_hadc);
 		return raw;
 	}
-	HAL_ADC_Stop(&hadc1);
+	HAL_ADC_Stop(_hadc);
 	return -1;
 
 }
@@ -130,15 +134,18 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_R,brillo);
-	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_G,brillo);
-	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_B,brillo);
+	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_R,brillo_R*factor_brillo);
+	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_G,brillo_G*factor_brillo);
+	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_B,brillo_B*factor_brillo);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
 	  // Leer el ADC por polling
-	  brillo_raw = leer_adc1();
-	  brillo = scale(brillo_raw);// brillo_raw * (MAX_PWM/MAX_ADC);
+	  pot1_raw = leer_adc(&hadc1);
+	  pot1_scale = scale(pot1_raw);
+	  factor_brillo = (float)pot1_scale / MAX_PWM;
+
   }
   /* USER CODE END 3 */
 }
