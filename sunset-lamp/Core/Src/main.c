@@ -37,6 +37,8 @@
 #define CANAL_B TIM_CHANNEL_3 // azul
 #define MAX_ADC 4095
 #define MAX_PWM 999
+#define factor_brillo_min 0.1
+#define factor_brillo_max 0.9
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -79,6 +81,16 @@ uint32_t leer_adc(ADC_HandleTypeDef* _hadc){
 	HAL_ADC_Stop(_hadc);
 	return -1;
 
+}
+
+void ajuste_brillo(){
+	/* Leemos el ADC por polling y calculamos el factor */
+	pot1_raw = leer_adc(&hadc1);
+	pot1_scale = scale(pot1_raw);
+	factor_brillo = (float)pot1_scale / MAX_PWM;
+	/* Para que no se salga del intervalo */
+	if(factor_brillo < factor_brillo_min) factor_brillo = factor_brillo_min;
+	if(factor_brillo > factor_brillo_max) factor_brillo = factor_brillo_max;
 }
 /* USER CODE END PFP */
 
@@ -134,18 +146,15 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+	  ajuste_brillo();
+
 	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_R,brillo_R*factor_brillo);
 	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_G,brillo_G*factor_brillo);
 	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_B,brillo_B*factor_brillo);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-	  // Leer el ADC por polling
-	  pot1_raw = leer_adc(&hadc1);
-	  pot1_scale = scale(pot1_raw);
-	  factor_brillo = (float)pot1_scale / MAX_PWM;
-
   }
   /* USER CODE END 3 */
 }
