@@ -27,7 +27,51 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+typedef enum{ EVENT_NONE /*ninguna entrada*/,
+	/* Botón de encendido y apagado */
+	EVENT_ONOFF,
 
+	/* Colores predeterminados */
+	EVENT_R /*luz roja (botón "R")*/,
+	EVENT_G /*luz verde (botón "G")*/,
+	EVENT_B /*luz azul (botón "B")*/,
+	EVENT_W /*luz blanca (botón "W")*/,
+
+	/* Colores personalizados */
+	EVENT_1 /*color personalizado 1*/,
+	EVENT_2 /*color personalizado 2*/,
+	EVENT_3 /*color personalizado 3*/,
+
+	/* Modos de ciclo */
+	EVENT_CICLO1 /*modo arcoíris (botón "RAINBOW")*/,
+	EVENT_CICLO2 /*modo discoteca (botón "RAVE")*/,
+	EVENT_CICLO3 /*modo fuego (botón "EMBER")*/,
+
+	/* Botón de ahorro de energía */
+	EVENT_MODO_AHORRO,
+
+	/* Botones de configuración de color */
+	EVENT_CONFIG_COLOR /*botón "CONGIG"*/,
+	EVENT_SAVE_COLOR /*botón "SAVE"*/
+} event_t;
+
+typedef enum{
+	OFF /*luz apagada*/,
+
+	NORMAL /*luz encendida,
+	el usuario puede seleccionar distintos colores y modificar el brillo*/,
+
+	CICLO /*modos de cambio de color*/,
+
+	AHORRO /*modo ahorro de energía,
+	este estado es como el normal, salvo que hay un timer que hará que la luz
+	se apague o vaya perdiendo intensidad después de un tiempo*/,
+
+	CONFIG_COLOR /*modo de configuración,
+	en ese modo el usuario puede ajustar el color de la luz para crear
+	una combinación personalizada y guardarla*/
+
+} states_t;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -52,12 +96,17 @@ ADC_HandleTypeDef hadc1;
 TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN PV */
-volatile uint32_t pot1_scale = 0;
-volatile uint32_t pot1_raw = 0;
-volatile uint32_t brillo_R = 666;
-volatile uint32_t brillo_G = 666;
-volatile uint32_t brillo_B = 666;
-volatile float factor_brillo = 0.0;
+
+/* Variables del potenciómetro que ajusta el brillo */
+volatile uint32_t pot1_raw = 0; // valor medido por el ADC (0-4095)
+volatile uint32_t pot1_scale = 0; // valor escalado (0-999)
+volatile float factor_brillo = 0.0; // factor de ajuste del brillo (0.1-0.9)
+
+/* Variables de color */
+volatile uint32_t brillo_R = 666; // Intensidad del canal rojo
+volatile uint32_t brillo_G = 666; // Intensidad del canal verde
+volatile uint32_t brillo_B = 666; // Intensidad del canal azul
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
