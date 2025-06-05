@@ -141,6 +141,8 @@ uint32_t leer_adc(ADC_HandleTypeDef* _hadc);
 void ajuste_brillo();
 void modo_normal();
 void modo_ciclo();
+void modo_ahorro();
+void modo_config();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -183,12 +185,21 @@ void modo_normal(){
 	  break;
 	case NORMAL_R:
 	  // asignar valores RGB para la luz ROJA
+		brillo_R = 999;
+		brillo_G = 0;
+		brillo_B = 0;
 	  break;
 	case NORMAL_G:
 	  // asignar valores RGB para la luz VERDE
+		brillo_R = 0;
+		brillo_G = 999;
+		brillo_B = 0;
 	  break;
 	case NORMAL_B:
 	  // asignar valores RGB para la luz AZUL
+		brillo_R = 0;
+		brillo_G = 0;
+		brillo_B = 999;
 	  break;
 	case NORMAL_1:
 	  // asignar valores RGB del color personalizado 1
@@ -217,6 +228,8 @@ void modo_ciclo(){
 	default:break;
 	}
 }
+void modo_ahorro(){}
+void modo_config(){}
 /* USER CODE END 0 */
 
 /**
@@ -272,7 +285,10 @@ int main(void)
 	  case EVENT_NONE:break;
 
 	  case EVENT_ONOFF:
-		  if(modo == OFF) modo = NORMAL;
+		  if(modo == OFF){
+			  modo = NORMAL;
+			  sub_modo = NORMAL_W;
+		  }
 		  else modo = OFF;
 		  entrada = EVENT_NONE;
 		  break;
@@ -385,8 +401,8 @@ int main(void)
 		  break;
 
 	  case AHORRO:
-		  // llamar a la función del modo ahorro
-
+		  /* Función del modo ahorro */
+		  modo_ahorro();
 		  /* Ajuste del brillo */
 		  ajuste_brillo();
 
@@ -396,9 +412,10 @@ int main(void)
 		  // llamar a la función de configuración del color
 		  // leer potenciómetros para ajustar el color
 		  // guardar los valores RGB en memoria
-
+		  modo_config();
 		  /* Ajute del brillo */
-		  ajuste_brillo();
+		  //ajuste_brillo();
+		  factor_brillo = 1;
 
 		  break;
 
