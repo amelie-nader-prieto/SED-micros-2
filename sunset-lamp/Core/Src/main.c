@@ -87,7 +87,12 @@ typedef enum{
 	/* Subestados del modo CICLO */
 	CICLO_1 /*modo arcoíris*/,
 	CICLO_2 /*modo discoteca*/,
-	CICLO_3 /*modo fuego*/
+	CICLO_3 /*modo fuego*/,
+
+	/* Subestados del modo CONFIG_COLOR */
+	CONFIG_1 /*el usuario configura el color 1*/,
+	CONFIG_2 /*el usuario configura el color 2*/,
+	CONFIG_3 /*el usuario configura el color 3*/
 }substates_t;
 /* USER CODE END PTD */
 
@@ -100,6 +105,7 @@ typedef enum{
 #define MAX_PWM 999
 #define factor_brillo_min 0.1
 #define factor_brillo_max 0.9
+#define USER_FLASH_ADDR 0x8060000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -190,6 +196,14 @@ void ajuste_brillo(){
 }
 
 void guardar_datos(){
+	if(modo!=CONFIG_COLOR) return;
+
+	// Guardamos una copia de la configuración actual
+	uint32_t vector_config[9] = {
+			CP1_R,CP1_G,CP1_B,
+			CP2_R,CP2_G,CP2_B,
+			CP3_R,CP3_G,CP3_B
+	};
 
 	uint32_t PAGError = 0;
 	FLASH_EraseInitTypeDef EraseInitStruct;
@@ -202,14 +216,43 @@ void guardar_datos(){
 
 	HAL_FLASH_Unlock();
 
-	/* Borramos el sector correspondiente */
+	/* Borramos el sector entero */
 	if(HAL_FLASHEx_Erase(&EraseInitStruct, &PAGError)!=HAL_OK){
 		HAL_FLASH_Lock();
 		return;
 	}
+
+	switch(sub_modo){
+	case CONFIG_1:
+		vector_config[0] = brillo_R;
+		vector_config[1] = brillo_G;
+		vector_config[2] = brillo_B;
+		break;
+	case CONFIG_2:
+		vector_config[3] = brillo_R;
+		vector_config[4] = brillo_G;
+		vector_config[5] = brillo_B;
+		break;
+	case CONFIG_3:
+		vector_config[6] = brillo_R;
+		vector_config[7] = brillo_G;
+		vector_config[8] = brillo_B;
+		break;
+	default:break;
+	}
+
 	/* Escribimos los datos */
+	for(uint32_t i=0;i<(sizeof(vector_config)/sizeof(vector_config[0]));i++){
+		uint32_t addr = (uint32_t) USER_FLASH_ADDR + 4*i;
+		if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, addr, vector_config[i])!=HAL_OK){
+			HAL_FLASH_Lock();
+			return;
+		}
+
+	}
 
 	HAL_FLASH_Lock();
+
 }
 
 void modo_normal(){
@@ -241,12 +284,21 @@ void modo_normal(){
 	  break;
 	case NORMAL_1:
 	  // asignar valores RGB del color personalizado 1
+		brillo_R = CP1_R;
+		brillo_G = CP1_G;
+		brillo_B = CP1_B;
 	  break;
 	case NORMAL_2:
 	  // asignar valores RGB del color personalizado 2
+		brillo_R = CP2_R;
+		brillo_G = CP2_G;
+		brillo_B = CP2_B;
 	  break;
 	case NORMAL_3:
 	  // asignar valores RGB del color personalizado 3
+		brillo_R = CP3_R;
+		brillo_G = CP3_G;
+		brillo_B = CP3_B;
 	  break;
 	default:break;
 	}
@@ -310,6 +362,7 @@ int main(void)
   __HAL_TIM_MOE_ENABLE(&htim1);
 
   HAL_ADC_Start(&hadc1);
+
 
   /* USER CODE END 2 */
 
@@ -399,11 +452,19 @@ int main(void)
 
 	  case EVENT_CONFIG_COLOR:
 		  if(modo == NORMAL) modo = CONFIG_COLOR;
+		  if(sub_modo == NORMAL_1) sub_modo = CONFIG_1;
+		  else if(sub_modo == NORMAL_2) sub_modo = CONFIG_2;
+		  else if(sub_modo == NORMAL_3) sub_modo = CONFIG_3;
+		  else sub_modo = CONFIG_1;
 		  entrada = EVENT_NONE;
 		  break;
 
 	  case EVENT_SAVE_COLOR:
-		  if(modo == CONFIG_COLOR) modo = NORMAL;
+		  if(modo == CONFIG_COLOR){
+			  guardar_datos();
+			  modo = NORMAL;
+			  sub_modo = NORMAL_W;
+		  }
 		  entrada = EVENT_NONE;
 		  break;
 
