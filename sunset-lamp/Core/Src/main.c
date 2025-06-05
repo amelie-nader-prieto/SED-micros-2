@@ -136,6 +136,15 @@ static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
+uint32_t scale(uint32_t raw);
+uint32_t leer_adc(ADC_HandleTypeDef* _hadc);
+void ajuste_brillo();
+void modo_normal();
+void modo_ciclo();
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
 uint32_t scale(uint32_t raw){
 	return (uint32_t)((raw*MAX_PWM))/MAX_ADC;
 }
@@ -162,11 +171,52 @@ void ajuste_brillo(){
 	if(factor_brillo < factor_brillo_min) factor_brillo = factor_brillo_min;
 	if(factor_brillo > factor_brillo_max) factor_brillo = factor_brillo_max;
 }
-/* USER CODE END PFP */
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
+void modo_normal(){
+	/* Configuración de los colores del modo normal */
+	switch(sub_modo){
+	case NORMAL_W:
+	  // asignar valores RGB para la luz BLANCA
+		brillo_R = 999;
+		brillo_G = 999;
+		brillo_B = 999;
+	  break;
+	case NORMAL_R:
+	  // asignar valores RGB para la luz ROJA
+	  break;
+	case NORMAL_G:
+	  // asignar valores RGB para la luz VERDE
+	  break;
+	case NORMAL_B:
+	  // asignar valores RGB para la luz AZUL
+	  break;
+	case NORMAL_1:
+	  // asignar valores RGB del color personalizado 1
+	  break;
+	case NORMAL_2:
+	  // asignar valores RGB del color personalizado 2
+	  break;
+	case NORMAL_3:
+	  // asignar valores RGB del color personalizado 3
+	  break;
+	default:break;
+	}
 
+}
+void modo_ciclo(){
+	switch(sub_modo){
+	case CICLO_1:
+	  // llamar a la función del ciclo 1 (modo arcoíris)
+	  break;
+	case CICLO_2:
+	  // llamar a la función del ciclo 2 (modo discoteca)
+	  break;
+	case CICLO_3:
+	  // llamar a la función del ciclo 3 (modo fuego)
+	  break;
+	default:break;
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -319,54 +369,16 @@ int main(void)
 		  break;
 
 	  case NORMAL:
-		  switch(sub_modo){
-		  case NORMAL_W:
-			  // asignar valores RGB para la luz BLANCA
-			  break;
-		  case NORMAL_R:
-			  // asignar valores RGB para la luz ROJA
-			  break;
-		  case NORMAL_G:
-			  // asignar valores RGB para la luz VERDE
-			  break;
-		  case NORMAL_B:
-			  // asignar valores RGB para la luz AZUL
-			  break;
-		  case NORMAL_1:
-			  // asignar valores RGB del color personalizado 1
-			  break;
-		  case NORMAL_2:
-			  // asignar valores RGB del color personalizado 2
-			  break;
-		  case NORMAL_3:
-			  // asignar valores RGB del color personalizado 3
-			  break;
-		  default:
-			  brillo_R = 666;
-			  brillo_G = 666;
-			  brillo_B = 666;
-			  break;
-		  }
-
+		  /* Función del modo normal */
+		  modo_normal();
 		  /* Ajuste del brillo */
 		  ajuste_brillo();
 
 		  break;
 
 	  case CICLO:
-		  switch(sub_modo){
-		  case CICLO_1:
-			  // llamar a la función del ciclo 1 (modo arcoíris)
-			  break;
-		  case CICLO_2:
-			  // llamar a la función del ciclo 2 (modo discoteca)
-			  break;
-		  case CICLO_3:
-			  // llamar a la función del ciclo 3 (modo fuego)
-			  break;
-		  default:break;
-		  }
-
+		  /* Función del modo ciclo */
+		  modo_ciclo();
 		  /* Ajuste del brillo */
 		  ajuste_brillo();
 
