@@ -101,7 +101,7 @@ typedef enum{
 #define CANAL_R TIM_CHANNEL_1 //rojo
 #define CANAL_G TIM_CHANNEL_2 //verde
 #define CANAL_B TIM_CHANNEL_3 // azul
-#define CANAL_POT1 ADC_CHANNEL_0
+#define CANAL_POT1 ADC_CHANNEL_4
 #define CANAL_POTR ADC_CHANNEL_1
 #define CANAL_POTG ADC_CHANNEL_2
 #define CANAL_POTB ADC_CHANNEL_3
@@ -648,7 +648,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
