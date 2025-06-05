@@ -175,7 +175,6 @@ uint32_t leer_adc(ADC_HandleTypeDef* _hadc){
 
 	HAL_ADC_Start(_hadc);
 	if(HAL_ADC_PollForConversion(_hadc, 100) == HAL_OK){
-		return HAL_ADC_GetValue(_hadc);
 		uint32_t raw = HAL_ADC_GetValue(_hadc);
 		HAL_ADC_Stop(_hadc);
 		return raw;
