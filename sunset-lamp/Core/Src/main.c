@@ -347,7 +347,11 @@ void modo_ciclo(){
 	}
 }
 void modo_ahorro(){}
-void modo_config(){}
+void modo_config(){
+	brillo_R = scale(leer_canal_adc(CANAL_POTR));
+	brillo_G = scale(leer_canal_adc(CANAL_POTG));
+	brillo_B = scale(leer_canal_adc(CANAL_POTB));
+}
 /* USER CODE END 0 */
 
 /**
@@ -537,8 +541,6 @@ int main(void)
 
 	  case CONFIG_COLOR:
 		  // llamar a la función de configuración del color
-		  // leer potenciómetros para ajustar el color
-		  // guardar los valores RGB en memoria
 		  modo_config();
 		  /* Ajute del brillo */
 		  //ajuste_brillo();
