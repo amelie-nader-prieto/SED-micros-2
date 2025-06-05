@@ -633,3 +633,41 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\LENOVO\Docume
 
 !ENTRY org.eclipse.cdt.core 1 0 2025-06-05 10:48:25.661
 !MESSAGE Indexed 'sunset-lamp' (24 sources, 121 headers) in 3.13 sec: 12,573 declarations; 61,596 references; 1 unresolved inclusions; 92 syntax errors; 240 unresolved names (0.32%)
+!SESSION 2025-06-05 11:21:00.431 -----------------------------------------------
+eclipse.buildId=Version 1.16.1
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=es_ES
+Framework arguments:  C:\Users\LENOVO\Documents\GitHub\SED-micros-2\sunset-lamp\.project
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\LENOVO\Documents\GitHub\SED-micros-2\sunset-lamp\.project
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2025-06-05 11:21:08.302
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2025-06-05 11:21:08.304
+!MESSAGE Log4j2 initialized with config file C:\Users\LENOVO\Documents\GitHub\SED-micros-2\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2025-06-05 11:21:18.521
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2025-06-05 11:21:22.511
+!MESSAGE Indexed 'sunset-lamp' (24 sources, 121 headers) in 3.57 sec: 12,577 declarations; 61,609 references; 1 unresolved inclusions; 92 syntax errors; 240 unresolved names (0.32%)
+!SESSION 2025-06-05 12:54:06.597 -----------------------------------------------
+eclipse.buildId=Version 1.16.1
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=es_ES
+Framework arguments:  C:\Users\LENOVO\Documents\GitHub\SED-micros-2\sunset-lamp\.project
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\LENOVO\Documents\GitHub\SED-micros-2\sunset-lamp\.project
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2025-06-05 12:54:14.064
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2025-06-05 12:54:14.066
+!MESSAGE Log4j2 initialized with config file C:\Users\LENOVO\Documents\GitHub\SED-micros-2\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2025-06-05 12:54:19.597
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2025-06-05 12:54:24.142
+!MESSAGE Indexed 'sunset-lamp' (24 sources, 121 headers) in 4.08 sec: 12,590 declarations; 61,650 references; 1 unresolved inclusions; 92 syntax errors; 240 unresolved names (0.32%)

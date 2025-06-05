@@ -3,49 +3,51 @@ sunset-lamp.elf:     file format elf32-littlearm
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .isr_vector   00000198  08000000  08000000  00001000  2**0
-                  CONTENTS, ALLOC, LOAD, READONLY, DATA
-  1 .text         00003858  08000198  08000198  00001198  2**3
-                  CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .rodata       00000010  080039f0  080039f0  000049f0  2**2
-                  CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .ARM.extab    00000000  08003a00  08003a00  0000501c  2**0
+  0 .user_data_flash 00000000  08060000  08060000  0000501c  2**0
                   CONTENTS
-  4 .ARM          00000008  08003a00  08003a00  00004a00  2**2
+  1 .isr_vector   00000198  08000000  08000000  00001000  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  5 .preinit_array 00000000  08003a08  08003a08  0000501c  2**0
+  2 .text         00003858  08000198  08000198  00001198  2**3
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  3 .rodata       00000010  080039f0  080039f0  000049f0  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  4 .ARM.extab    00000000  08003a00  08003a00  0000501c  2**0
+                  CONTENTS
+  5 .ARM          00000008  08003a00  08003a00  00004a00  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  6 .preinit_array 00000000  08003a08  08003a08  0000501c  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .init_array   00000004  08003a08  08003a08  00004a08  2**2
+  7 .init_array   00000004  08003a08  08003a08  00004a08  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  7 .fini_array   00000004  08003a0c  08003a0c  00004a0c  2**2
+  8 .fini_array   00000004  08003a0c  08003a0c  00004a0c  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  8 .data         0000001c  20000000  08003a10  00005000  2**2
+  9 .data         0000001c  20000000  08003a10  00005000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          000000c0  2000001c  08003a2c  0000501c  2**2
+ 10 .bss          000000c0  2000001c  08003a2c  0000501c  2**2
                   ALLOC
- 10 ._user_heap_stack 00000604  200000dc  08003a2c  000050dc  2**0
+ 11 ._user_heap_stack 00000604  200000dc  08003a2c  000050dc  2**0
                   ALLOC
- 11 .ARM.attributes 00000030  00000000  00000000  0000501c  2**0
+ 12 .ARM.attributes 00000030  00000000  00000000  0000501c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00009be2  00000000  00000000  0000504c  2**0
+ 13 .debug_info   00009d46  00000000  00000000  0000504c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 000017be  00000000  00000000  0000ec2e  2**0
+ 14 .debug_abbrev 00001817  00000000  00000000  0000ed92  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000a98  00000000  00000000  000103f0  2**3
+ 15 .debug_aranges 00000aa0  00000000  00000000  000105b0  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 00000832  00000000  00000000  00010e88  2**0
+ 16 .debug_rnglists 00000838  00000000  00000000  00011050  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00016474  00000000  00000000  000116ba  2**0
+ 17 .debug_macro  0001647e  00000000  00000000  00011888  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000b89f  00000000  00000000  00027b2e  2**0
+ 18 .debug_line   0000b8d5  00000000  00000000  00027d06  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00093d2e  00000000  00000000  000333cd  2**0
+ 19 .debug_str    00093e3e  00000000  00000000  000335db  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000c70fb  2**0
+ 20 .comment      00000043  00000000  00000000  000c7419  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00002dcc  00000000  00000000  000c7140  2**2
+ 21 .debug_frame  00002df0  00000000  00000000  000c745c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000068  00000000  00000000  000c9f0c  2**0
+ 22 .debug_line_str 00000068  00000000  00000000  000ca24c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -908,6 +910,10 @@ void ajuste_brillo(){
  8000a60:	3f666666 	.word	0x3f666666
 
 08000a64 <modo_normal>:
+	/* Escribimos los datos */
+
+	HAL_FLASH_Lock();
+}
 
 void modo_normal(){
  8000a64:	b480      	push	{r7}

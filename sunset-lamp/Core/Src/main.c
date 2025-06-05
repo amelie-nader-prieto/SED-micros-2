@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "stm32f4xx_hal_tim.h"
 #include "stm32f4xx_hal_adc.h"
+#include "stm32f4xx_hal_flash_ex.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -103,7 +104,7 @@ typedef enum{
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+#define NO_VOLATIL __attribute__((__section__(".user_data_flash")))
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -128,6 +129,19 @@ volatile uint32_t brillo_R = 666; // Intensidad del canal rojo (0-999)
 volatile uint32_t brillo_G = 666; // Intensidad del canal verde (0-999)
 volatile uint32_t brillo_B = 666; // Intensidad del canal azul (0-999)
 
+/* Variables no volátiles */
+uint32_t NO_VOLATIL CP1_R;
+uint32_t NO_VOLATIL CP1_G;
+uint32_t NO_VOLATIL CP1_B;
+
+uint32_t NO_VOLATIL CP2_R;
+uint32_t NO_VOLATIL CP2_G;
+uint32_t NO_VOLATIL CP2_B;
+
+uint32_t NO_VOLATIL CP3_R;
+uint32_t NO_VOLATIL CP3_G;
+uint32_t NO_VOLATIL CP3_B;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -139,6 +153,7 @@ static void MX_ADC1_Init(void);
 uint32_t scale(uint32_t raw);
 uint32_t leer_adc(ADC_HandleTypeDef* _hadc);
 void ajuste_brillo();
+void guardar_datos();
 void modo_normal();
 void modo_ciclo();
 void modo_ahorro();
@@ -172,6 +187,29 @@ void ajuste_brillo(){
 	/* Para que no se salga del intervalo */
 	if(factor_brillo < factor_brillo_min) factor_brillo = factor_brillo_min;
 	if(factor_brillo > factor_brillo_max) factor_brillo = factor_brillo_max;
+}
+
+void guardar_datos(){
+
+	uint32_t PAGError = 0;
+	FLASH_EraseInitTypeDef EraseInitStruct;
+
+	EraseInitStruct.TypeErase = FLASH_TYPEERASE_SECTORS;
+	EraseInitStruct.Banks = FLASH_BANK_1;
+	EraseInitStruct.Sector = FLASH_SECTOR_7;
+	EraseInitStruct.NbSectors = 1;
+	EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+
+	HAL_FLASH_Unlock();
+
+	/* Borramos el sector correspondiente */
+	if(HAL_FLASHEx_Erase(&EraseInitStruct, &PAGError)!=HAL_OK){
+		HAL_FLASH_Lock();
+		return;
+	}
+	/* Escribimos los datos */
+
+	HAL_FLASH_Lock();
 }
 
 void modo_normal(){
