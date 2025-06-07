@@ -7,9 +7,9 @@
 ../Core/Src/main.c:335:6:modo_ciclo	5
 ../Core/Src/main.c:349:6:modo_ahorro	1
 ../Core/Src/main.c:350:6:modo_config	1
-../Core/Src/main.c:361:5:main	48
-../Core/Src/main.c:570:6:SystemClock_Config	3
-../Core/Src/main.c:617:13:MX_ADC1_Init	3
-../Core/Src/main.c:669:13:MX_TIM1_Init	9
-../Core/Src/main.c:752:13:MX_GPIO_Init	1
-../Core/Src/main.c:824:6:Error_Handler	1
+../Core/Src/main.c:361:5:main	54
+../Core/Src/main.c:592:6:SystemClock_Config	3
+../Core/Src/main.c:639:13:MX_ADC1_Init	3
+../Core/Src/main.c:691:13:MX_TIM1_Init	9
+../Core/Src/main.c:774:13:MX_GPIO_Init	1
+../Core/Src/main.c:846:6:Error_Handler	1

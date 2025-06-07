@@ -107,8 +107,8 @@ typedef enum{
 #define CANAL_POTB ADC_CHANNEL_3
 #define MAX_ADC 4095
 #define MAX_PWM 999
-#define factor_brillo_min 0.1
-#define factor_brillo_max 0.9
+#define factor_brillo_min 0.0
+#define factor_brillo_max 1.0
 #define USER_FLASH_ADDR 0x8060000
 /* USER CODE END PD */
 
@@ -483,12 +483,37 @@ int main(void)
 		  break;
 
 	  case EVENT_CONFIG_COLOR:
-		  if(modo == NORMAL) modo = CONFIG_COLOR;
+		  /*if(modo == NORMAL) modo = CONFIG_COLOR;
 		  if(sub_modo == NORMAL_1) sub_modo = CONFIG_1;
 		  else if(sub_modo == NORMAL_2) sub_modo = CONFIG_2;
 		  else if(sub_modo == NORMAL_3) sub_modo = CONFIG_3;
 		  else sub_modo = CONFIG_1;
+		  entrada = EVENT_NONE;*/
+
+		  /* Si se pulsa en modo config, se sale sin guardar */
+		  if(modo == CONFIG_COLOR){
+			  modo = NORMAL;
+			  switch(sub_modo){
+			  case CONFIG_1:sub_modo = NORMAL_1;break;
+			  case CONFIG_2:sub_modo = NORMAL_2;break;
+			  case CONFIG_3:sub_modo = NORMAL_3;break;
+			  default:sub_modo = NORMAL_W;break;
+			  }
+		  }
+
+		  /* Si se pulsa en modo normal se pasa al modo config */
+		  else if(modo == NORMAL){
+			  modo = CONFIG_COLOR;
+			  switch(sub_modo){
+			  case NORMAL_1:sub_modo = CONFIG_1;break;
+			  case NORMAL_2:sub_modo = CONFIG_2;break;
+			  case NORMAL_3:sub_modo = CONFIG_3;break;
+			  default:sub_modo = CONFIG_1;break;
+			  }
+		  }
+
 		  entrada = EVENT_NONE;
+
 		  break;
 
 	  case EVENT_SAVE_COLOR:
@@ -543,15 +568,12 @@ int main(void)
 		  // llamar a la función de configuración del color
 		  modo_config();
 		  /* Ajute del brillo */
-		  //ajuste_brillo();
 		  factor_brillo = 1;
 
 		  break;
 
 	  default:break;
 	  }
-
-	  //ajuste_brillo();
 
 	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_R,brillo_R*factor_brillo);
 	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_G,brillo_G*factor_brillo);

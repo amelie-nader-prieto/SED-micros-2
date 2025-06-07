@@ -1053,3 +1053,22 @@ org.eclipse.core.runtime.AssertionFailedException: assertion failed: The applica
 
 !ENTRY org.eclipse.core.jobs 2 2 2025-06-07 13:15:41.995
 !MESSAGE Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: org.eclipse.cdt.dsf.gdb.internal.ui.console.GdbBasicCliConsole$InputReadJob
+!SESSION 2025-06-07 13:16:34.911 -----------------------------------------------
+eclipse.buildId=Version 1.16.1
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=es_ES
+Framework arguments:  C:\Users\LENOVO\Documents\GitHub\SED-micros-2\sunset-lamp\.project
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\LENOVO\Documents\GitHub\SED-micros-2\sunset-lamp\.project
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2025-06-07 13:16:41.003
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2025-06-07 13:16:41.005
+!MESSAGE Log4j2 initialized with config file C:\Users\LENOVO\Documents\GitHub\SED-micros-2\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2025-06-07 13:16:50.843
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2025-06-07 13:16:54.891
+!MESSAGE Indexed 'sunset-lamp' (24 sources, 121 headers) in 3.63 sec: 12,602 declarations; 61,814 references; 1 unresolved inclusions; 92 syntax errors; 240 unresolved names (0.32%)
