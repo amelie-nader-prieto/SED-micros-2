@@ -822,8 +822,8 @@ uint32_t leer_canal_adc(uint32_t ch){
 	sConfig.Rank = 1;
  800099a:	2301      	movs	r3, #1
  800099c:	613b      	str	r3, [r7, #16]
-	sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
- 800099e:	2300      	movs	r3, #0
+	sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
+ 800099e:	2303      	movs	r3, #3
  80009a0:	617b      	str	r3, [r7, #20]
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
  80009a2:	f107 030c 	add.w	r3, r7, #12
