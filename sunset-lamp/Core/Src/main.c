@@ -160,15 +160,24 @@ static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
+
+/* Gestión de las entradas analógicas */
 uint32_t scale(uint32_t raw);
 uint32_t leer_canal_adc(uint32_t ch);
 void ajuste_brillo();
+
+/* Gestión de la memoria flash */
 void guardar_datos();
+
+/* Modos de funcionamiento */
 void modo_normal();
 void modo_ciclo();
 void modo_ahorro();
 void modo_config();
+
+/* Lógica de la máquina de estados */
 void state_decod();
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -571,6 +580,7 @@ int main(void)
 	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_R,brillo_R*factor_brillo);
 	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_G,brillo_G*factor_brillo);
 	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_B,brillo_B*factor_brillo);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
