@@ -161,7 +161,6 @@ static void MX_TIM1_Init(void);
 static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
 uint32_t scale(uint32_t raw);
-uint32_t leer_adc(ADC_HandleTypeDef* _hadc);
 uint32_t leer_canal_adc(uint32_t ch);
 void ajuste_brillo();
 void guardar_datos();
@@ -169,24 +168,13 @@ void modo_normal();
 void modo_ciclo();
 void modo_ahorro();
 void modo_config();
+void state_decod();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint32_t scale(uint32_t raw){
 	return (uint32_t)((raw*MAX_PWM))/MAX_ADC;
-}
-uint32_t leer_adc(ADC_HandleTypeDef* _hadc){
-
-	HAL_ADC_Start(_hadc);
-	if(HAL_ADC_PollForConversion(_hadc, 100) == HAL_OK){
-		uint32_t raw = HAL_ADC_GetValue(_hadc);
-		HAL_ADC_Stop(_hadc);
-		return raw;
-	}
-	HAL_ADC_Stop(_hadc);
-	return -1;
-
 }
 uint32_t leer_canal_adc(uint32_t ch){
 	// Para leer un canal específico del ADC
@@ -352,6 +340,180 @@ void modo_config(){
 	brillo_G = scale(leer_canal_adc(CANAL_POTG));
 	brillo_B = scale(leer_canal_adc(CANAL_POTB));
 }
+void state_decod(){
+
+	switch(entrada){
+		  case EVENT_NONE:break;
+
+		  case EVENT_ONOFF:
+			  if(modo == OFF){
+				  modo = NORMAL;
+				  sub_modo = NORMAL_W;
+			  }
+			  else modo = OFF;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_R:
+			  if(modo == CICLO) modo = NORMAL;
+			  if(modo == NORMAL) sub_modo = NORMAL_R;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_G:
+			  if(modo == CICLO) modo = NORMAL;
+			  if(modo == NORMAL) sub_modo = NORMAL_G;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_B:
+			  if(modo == CICLO) modo = NORMAL;
+			  if(modo == NORMAL) sub_modo = NORMAL_B;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_W:
+			  if(modo == CICLO) modo = NORMAL;
+			  if(modo == NORMAL) sub_modo = NORMAL_W;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_1:
+			  if(modo == CICLO) modo = NORMAL;
+			  if(modo == NORMAL) sub_modo = NORMAL_1;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_2:
+			  if(modo == CICLO) modo = NORMAL;
+			  if(modo == NORMAL) sub_modo = NORMAL_2;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_3:
+			  if(modo == CICLO) modo = NORMAL;
+			  if(modo == NORMAL) sub_modo = NORMAL_3;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_CICLO1:
+			  if(modo == NORMAL) modo = CICLO;
+			  if(modo == CICLO) sub_modo = CICLO_1;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_CICLO2:
+			  if(modo == NORMAL) modo = CICLO;
+			  if(modo == CICLO) sub_modo = CICLO_2;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_CICLO3:
+			  if(modo == NORMAL) modo = CICLO;
+			  if(modo == CICLO) sub_modo = CICLO_3;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_MODO_AHORRO:
+			  if(modo == NORMAL) modo = AHORRO;
+			  else modo = NORMAL;
+			  entrada = EVENT_NONE;
+			  break;
+
+		  case EVENT_CONFIG_COLOR:
+			  /*if(modo == NORMAL) modo = CONFIG_COLOR;
+			  if(sub_modo == NORMAL_1) sub_modo = CONFIG_1;
+			  else if(sub_modo == NORMAL_2) sub_modo = CONFIG_2;
+			  else if(sub_modo == NORMAL_3) sub_modo = CONFIG_3;
+			  else sub_modo = CONFIG_1;
+			  entrada = EVENT_NONE;*/
+
+			  /* Si se pulsa en modo config, se sale sin guardar */
+			  if(modo == CONFIG_COLOR){
+				  modo = NORMAL;
+				  switch(sub_modo){
+				  case CONFIG_1:sub_modo = NORMAL_1;break;
+				  case CONFIG_2:sub_modo = NORMAL_2;break;
+				  case CONFIG_3:sub_modo = NORMAL_3;break;
+				  default:sub_modo = NORMAL_W;break;
+				  }
+			  }
+
+			  /* Si se pulsa en modo normal se pasa al modo config */
+			  else if(modo == NORMAL){
+				  modo = CONFIG_COLOR;
+				  switch(sub_modo){
+				  case NORMAL_1:sub_modo = CONFIG_1;break;
+				  case NORMAL_2:sub_modo = CONFIG_2;break;
+				  case NORMAL_3:sub_modo = CONFIG_3;break;
+				  default:sub_modo = CONFIG_1;break;
+				  }
+			  }
+
+			  entrada = EVENT_NONE;
+
+			  break;
+
+		  case EVENT_SAVE_COLOR:
+			  if(modo == CONFIG_COLOR){
+				  guardar_datos();
+				  modo = NORMAL;
+				  sub_modo = NORMAL_W;
+			  }
+			  entrada = EVENT_NONE;
+			  break;
+
+		  default:
+			  entrada = EVENT_NONE;
+			  break;
+		  }
+
+		  /* Actualización de las salidas en función del estado */
+		  switch(modo){
+		  case OFF:
+			  // poner todos los canales a 0 (luz apagada)
+			  brillo_R = 0;
+			  brillo_G = 0;
+			  brillo_B = 0;
+
+			  break;
+
+		  case NORMAL:
+			  /* Función del modo normal */
+			  modo_normal();
+			  /* Ajuste del brillo */
+			  ajuste_brillo();
+
+			  break;
+
+		  case CICLO:
+			  /* Función del modo ciclo */
+			  modo_ciclo();
+			  /* Ajuste del brillo */
+			  ajuste_brillo();
+
+			  break;
+
+		  case AHORRO:
+			  /* Función del modo ahorro */
+			  modo_ahorro();
+			  /* Ajuste del brillo */
+			  ajuste_brillo();
+
+			  break;
+
+		  case CONFIG_COLOR:
+			  // llamar a la función de configuración del color
+			  modo_config();
+			  /* Ajute del brillo */
+			  factor_brillo = 1;
+
+			  break;
+
+		  default:break;
+		  }
+
+}
 /* USER CODE END 0 */
 
 /**
@@ -404,176 +566,7 @@ int main(void)
   {
 
 	  /* Actualización del estado en función de las entradas */
-	  switch(entrada){
-	  case EVENT_NONE:break;
-
-	  case EVENT_ONOFF:
-		  if(modo == OFF){
-			  modo = NORMAL;
-			  sub_modo = NORMAL_W;
-		  }
-		  else modo = OFF;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_R:
-		  if(modo == CICLO) modo = NORMAL;
-		  if(modo == NORMAL) sub_modo = NORMAL_R;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_G:
-		  if(modo == CICLO) modo = NORMAL;
-		  if(modo == NORMAL) sub_modo = NORMAL_G;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_B:
-		  if(modo == CICLO) modo = NORMAL;
-		  if(modo == NORMAL) sub_modo = NORMAL_B;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_W:
-		  if(modo == CICLO) modo = NORMAL;
-		  if(modo == NORMAL) sub_modo = NORMAL_W;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_1:
-		  if(modo == CICLO) modo = NORMAL;
-		  if(modo == NORMAL) sub_modo = NORMAL_1;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_2:
-		  if(modo == CICLO) modo = NORMAL;
-		  if(modo == NORMAL) sub_modo = NORMAL_2;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_3:
-		  if(modo == CICLO) modo = NORMAL;
-		  if(modo == NORMAL) sub_modo = NORMAL_3;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_CICLO1:
-		  if(modo == NORMAL) modo = CICLO;
-		  if(modo == CICLO) sub_modo = CICLO_1;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_CICLO2:
-		  if(modo == NORMAL) modo = CICLO;
-		  if(modo == CICLO) sub_modo = CICLO_2;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_CICLO3:
-		  if(modo == NORMAL) modo = CICLO;
-		  if(modo == CICLO) sub_modo = CICLO_3;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_MODO_AHORRO:
-		  if(modo == NORMAL) modo = AHORRO;
-		  else modo = NORMAL;
-		  entrada = EVENT_NONE;
-		  break;
-
-	  case EVENT_CONFIG_COLOR:
-		  /*if(modo == NORMAL) modo = CONFIG_COLOR;
-		  if(sub_modo == NORMAL_1) sub_modo = CONFIG_1;
-		  else if(sub_modo == NORMAL_2) sub_modo = CONFIG_2;
-		  else if(sub_modo == NORMAL_3) sub_modo = CONFIG_3;
-		  else sub_modo = CONFIG_1;
-		  entrada = EVENT_NONE;*/
-
-		  /* Si se pulsa en modo config, se sale sin guardar */
-		  if(modo == CONFIG_COLOR){
-			  modo = NORMAL;
-			  switch(sub_modo){
-			  case CONFIG_1:sub_modo = NORMAL_1;break;
-			  case CONFIG_2:sub_modo = NORMAL_2;break;
-			  case CONFIG_3:sub_modo = NORMAL_3;break;
-			  default:sub_modo = NORMAL_W;break;
-			  }
-		  }
-
-		  /* Si se pulsa en modo normal se pasa al modo config */
-		  else if(modo == NORMAL){
-			  modo = CONFIG_COLOR;
-			  switch(sub_modo){
-			  case NORMAL_1:sub_modo = CONFIG_1;break;
-			  case NORMAL_2:sub_modo = CONFIG_2;break;
-			  case NORMAL_3:sub_modo = CONFIG_3;break;
-			  default:sub_modo = CONFIG_1;break;
-			  }
-		  }
-
-		  entrada = EVENT_NONE;
-
-		  break;
-
-	  case EVENT_SAVE_COLOR:
-		  if(modo == CONFIG_COLOR){
-			  guardar_datos();
-			  modo = NORMAL;
-			  sub_modo = NORMAL_W;
-		  }
-		  entrada = EVENT_NONE;
-		  break;
-
-	  default:
-		  entrada = EVENT_NONE;
-		  break;
-	  }
-
-	  /* Actualización de las salidas en función del estado */
-	  switch(modo){
-	  case OFF:
-		  // poner todos los canales a 0 (luz apagada)
-		  brillo_R = 0;
-		  brillo_G = 0;
-		  brillo_B = 0;
-
-		  break;
-
-	  case NORMAL:
-		  /* Función del modo normal */
-		  modo_normal();
-		  /* Ajuste del brillo */
-		  ajuste_brillo();
-
-		  break;
-
-	  case CICLO:
-		  /* Función del modo ciclo */
-		  modo_ciclo();
-		  /* Ajuste del brillo */
-		  ajuste_brillo();
-
-		  break;
-
-	  case AHORRO:
-		  /* Función del modo ahorro */
-		  modo_ahorro();
-		  /* Ajuste del brillo */
-		  ajuste_brillo();
-
-		  break;
-
-	  case CONFIG_COLOR:
-		  // llamar a la función de configuración del color
-		  modo_config();
-		  /* Ajute del brillo */
-		  factor_brillo = 1;
-
-		  break;
-
-	  default:break;
-	  }
+	  state_decod();
 
 	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_R,brillo_R*factor_brillo);
 	  __HAL_TIM_SET_COMPARE(&htim1,CANAL_G,brillo_G*factor_brillo);
