@@ -530,33 +530,123 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	/*Se plantean las diferentes entradas para el switch case
 	 * en base a botones y cada botón activa un evento distinto*/
 
-    if (GPIO_Pin == GPIO_PIN_0) entrada = EVENT_ONOFF;
+	/*Para obtener los antirrebotes se utilizará la función HAL_GetTick
+	 * que medira el tiempo en milisegundos para rehabilitar la entrada*/
 
-    if (GPIO_Pin == GPIO_PIN_1)	entrada = EVENT_R;
+	static uint32_t last_tick = 0;
+	uint32_t now = HAL_GetTick();
 
-    if (GPIO_Pin == GPIO_PIN_2)	entrada = EVENT_G;
+    if (GPIO_Pin == GPIO_PIN_0)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_ONOFF;
+    		last_tick = now;
+    	}
+    }
 
-    if (GPIO_Pin == GPIO_PIN_3)	entrada = EVENT_B;
+    if (GPIO_Pin == GPIO_PIN_1)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_R;
+    		last_tick = now;
+    	}
+    }
 
-    if (GPIO_Pin == GPIO_PIN_4)	entrada = EVENT_W;
+    if (GPIO_Pin == GPIO_PIN_2)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_G;
+    		last_tick = now;
+    	}
+    }
 
-    if (GPIO_Pin == GPIO_PIN_5) entrada = EVENT_1;
+    if (GPIO_Pin == GPIO_PIN_3)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_B;
+    		last_tick = now;
+    	}
+    }
 
-    if (GPIO_Pin == GPIO_PIN_6)	entrada = EVENT_2;
+    if (GPIO_Pin == GPIO_PIN_4)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_W;
+    		last_tick = now;
+    	}
+    }
 
-    if (GPIO_Pin == GPIO_PIN_7) entrada = EVENT_3;
+    if (GPIO_Pin == GPIO_PIN_5)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_1;
+    		last_tick = now;
+    	}
+    }
 
-    if (GPIO_Pin == GPIO_PIN_8) entrada = EVENT_CICLO1;
+    if (GPIO_Pin == GPIO_PIN_6)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_2;
+    		last_tick = now;
+    	}
+    }
 
-    if (GPIO_Pin == GPIO_PIN_9) entrada = EVENT_CICLO2;
+    if (GPIO_Pin == GPIO_PIN_7)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_3;
+    		last_tick = now;
+    	}
+    }
 
-    if (GPIO_Pin == GPIO_PIN_10) entrada = EVENT_CICLO3;
+    if (GPIO_Pin == GPIO_PIN_8)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_CICLO1;
+    		last_tick = now;
+    	}
+    }
 
-    if (GPIO_Pin == GPIO_PIN_11) entrada = EVENT_MODO_AHORRO;
+    if (GPIO_Pin == GPIO_PIN_9)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_CICLO2;
+    		last_tick = now;
+    	}
+    }
 
-    if (GPIO_Pin == GPIO_PIN_12) entrada = EVENT_CONFIG_COLOR;
+    if (GPIO_Pin == GPIO_PIN_10)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_CICLO3;
+    		last_tick = now;
+    	}
+    }
+
+    if (GPIO_Pin == GPIO_PIN_11)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_MODO_AHORRO;
+    		last_tick = now;
+    	}
+    }
+
+    if (GPIO_Pin == GPIO_PIN_12)
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_CONFIG_COLOR;
+    		last_tick = now;
+    	}
+    }
 
     if (GPIO_Pin == GPIO_PIN_13) entrada = EVENT_SAVE_COLOR;
+    {
+    	if ((now - last_tick) > 50) {
+    		entrada = EVENT_SAVE_COLOR;
+    		last_tick = now;
+    	}
+    }
 }
 
 /* USER CODE END 0 */
