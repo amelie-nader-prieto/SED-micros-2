@@ -337,16 +337,106 @@ void modo_normal(){
 	}
 
 }
+
+void modo_arcoiris(){
+	while (CICLO_1){
+		/*Se realizarán los cambios de colores en base a los
+		 * colores del arcoiris: rojo, naranja, amarillo, verde,
+		 * azul, añil y violeta
+		 */
+		//Rojo (255,0,0)
+		brillo_R = 999;
+		brillo_G = 0;
+		brillo_B = 0;
+		HAL_Delay(1000);
+
+		//Naranja (255,165,0)
+		brillo_R = 999;
+		brillo_G = 999*165/255;
+		brillo_B = 0;
+		HAL_Delay(1000);
+
+		//Amarillo (255,255,0)
+		brillo_R = 999;
+		brillo_G = 999;
+		brillo_B = 0;
+		HAL_Delay(1000);
+
+		//Verde (0,255,0)
+		brillo_R = 0;
+		brillo_G = 999;
+		brillo_B = 0;
+		HAL_Delay(1000);
+
+		//Azul (0,0,255)
+		brillo_R = 0;
+		brillo_G = 0;
+		brillo_B = 999;
+		HAL_Delay(1000);
+
+		//Añil (75,0,130)
+		brillo_R = 999*75/255;
+		brillo_G = 0;
+		brillo_B = 999*130/255;
+		HAL_Delay(1000);
+
+		//Violeta (148,0,211)
+		brillo_R = 999*148/255;
+		brillo_G = 0;
+		brillo_B = 999*211/255;
+		HAL_Delay(1000);
+
+	}
+}
+
+
+void modo_discoteca(){
+	//La luz parpadea cada 2 segundos y se mantiene apagada 1
+	uint16_t Red,Green,Blue;
+	Red=brillo_R;
+	Green=brillo_G;
+	Blue=brillo_B;
+
+	while(CICLO_2){
+		brillo_R=0;
+		brillo_G=0;
+		brillo_B=0;
+
+		HAL_Delay(1000);
+
+		brillo_R=Red;
+		brillo_G=Green;
+		brillo_B=Blue;
+
+		HAL_Delay(2000);
+	}
+
+}
+
+void modo_fuego(){
+	//Se tiene que poner la luz de un rojo cada vez más intenso
+	uint8_t i;
+	brillo_G=0;
+	brillo_B=0;
+
+	for(i=0;i<=255;i++)
+	{
+		if(brillo_R<=brillo_R*i/255) brillo_R=brillo_R*i/255;
+	}
+}
+
 void modo_ciclo(){
 	switch(sub_modo){
 	case CICLO_1:
 	  // llamar a la función del ciclo 1 (modo arcoíris)
+		modo_arcoiris;
 	  break;
 	case CICLO_2:
 	  // llamar a la función del ciclo 2 (modo discoteca)
 	  break;
 	case CICLO_3:
 	  // llamar a la función del ciclo 3 (modo fuego)
+		modo_fuego
 	  break;
 	default:break;
 	}
