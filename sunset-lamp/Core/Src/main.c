@@ -351,8 +351,6 @@ void modo_arcoiris(){
 		//Rojo (255,0,0)
 
 		uint8_t i;
-		uint16_t j;
-
 
 		brillo_R = 999;
 		brillo_G = 0;
@@ -469,6 +467,7 @@ void modo_ciclo(){
 	  break;
 	case CICLO_2:
 	  // llamar a la función del ciclo 2 (modo discoteca)
+		modo_discoteca();
 	  break;
 	case CICLO_3:
 	  // llamar a la función del ciclo 3 (modo fuego)
