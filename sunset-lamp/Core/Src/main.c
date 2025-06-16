@@ -671,7 +671,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     	}
     }
 
-    if (GPIO_Pin == GPIO_PIN_13) entrada = EVENT_SAVE_COLOR;
+    if (GPIO_Pin == GPIO_PIN_13)
     {
     	if ((now - last_tick) > 50) {
     		entrada = EVENT_SAVE_COLOR;
