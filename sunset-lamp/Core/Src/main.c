@@ -128,6 +128,7 @@ TIM_HandleTypeDef htim1;
 volatile event_t entrada = EVENT_NONE;
 volatile states_t modo = NORMAL;
 volatile substates_t sub_modo = NORMAL_W;
+volatile uint8_t timer_iniciado = 0;
 
 /* Variables del potenciómetro que ajusta el brillo */
 volatile uint32_t pot1_raw = 0; // valor medido por el ADC (0-4095)
@@ -151,6 +152,10 @@ uint32_t NO_VOLATIL CP2_B;
 uint32_t NO_VOLATIL CP3_R;
 uint32_t NO_VOLATIL CP3_G;
 uint32_t NO_VOLATIL CP3_B;
+
+/* Temporizador */
+TIM_HandleTypeDef htim2;
+
 
 /* USER CODE END PV */
 
@@ -177,6 +182,9 @@ void modo_config();
 
 /* Lógica de la máquina de estados */
 void state_decod();
+
+/* Prototipo de inicialización del temporizador*/
+void MX_TIM2_Init(void);
 
 /* USER CODE END PFP */
 
@@ -343,7 +351,30 @@ void modo_ciclo(){
 	default:break;
 	}
 }
-void modo_ahorro(){}
+void modo_ahorro(){
+	if (!timer_iniciado)
+	  {
+	    MX_TIM2_Init();                         // Inicializar TIM2
+	    HAL_TIM_Base_Start_IT(&htim2);         // Iniciar con interrupción
+	    timer_iniciado = 1;                    // Iniciado
+	  }
+
+	//Bajar el brillo a la mitad
+	  brillo_R = brillo_R / 2;
+	  brillo_G = brillo_G / 2;
+	  brillo_B = brillo_B / 2;
+}
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if(htim->Instance == TIM2 && modo == AHORRO){
+    HAL_TIM_Base_Stop_IT(&htim2);  // Detiene el temporizador
+    modo = OFF;                    // Apaga la luz
+    sub_modo = NORMAL_W;           // Modo blanco por defecto
+    timer_iniciado = 0;            // Permite reiniciar el temporizador si vuelvo a ahorro
+  }
+}
+
+
 void modo_config(){
 	brillo_R = scale(leer_canal_adc(CANAL_POTR));
 	brillo_G = scale(leer_canal_adc(CANAL_POTG));
@@ -893,6 +924,40 @@ static void MX_TIM1_Init(void)
   /* USER CODE END TIM1_Init 2 */
   HAL_TIM_MspPostInit(&htim1);
 
+}
+void MX_TIM2_Init(void)
+{
+  /* USER CODE BEGIN TIM2_Init 0 */
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+  /* USER CODE END TIM2_Init 1 */
+
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 8399;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 99999;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN TIM2_Init 2 */
+  /* USER CODE END TIM2_Init 2 */
+
+  HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(TIM2_IRQn);
 }
 
 /**
