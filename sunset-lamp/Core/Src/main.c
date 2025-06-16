@@ -345,45 +345,77 @@ void modo_arcoiris(){
 		 * azul, añil y violeta
 		 */
 		//Rojo (255,0,0)
+
+		uint8_t i;
+		uint16_t j;
+
+
 		brillo_R = 999;
 		brillo_G = 0;
 		brillo_B = 0;
 		HAL_Delay(1000);
 
+		//para obtener un cambio progresivo se utiliza el bucle for
+		//cambiando así cada brillo y ajustandolo al del siguiente color
+
 		//Naranja (255,165,0)
-		brillo_R = 999;
-		brillo_G = 999*165/255;
-		brillo_B = 0;
+
+		for(i=0;i<=165;i++){
+			//brillo_R = 999;
+			brillo_G = 999*(i/255);
+			//brillo_B = 0;
+			HAL_Delay(50);
+		}
 		HAL_Delay(1000);
 
 		//Amarillo (255,255,0)
-		brillo_R = 999;
-		brillo_G = 999;
-		brillo_B = 0;
+		for(i=165;i<=255;i++){
+			//brillo_R = 999;
+			brillo_G = 999*(i/255);
+			//brillo_B = 0;
+			HAL_Delay(50);
+		}
+
 		HAL_Delay(1000);
 
 		//Verde (0,255,0)
-		brillo_R = 0;
-		brillo_G = 999;
-		brillo_B = 0;
+		for(i=255;i>=0;i--){
+			brillo_R = 999*(i/255);
+			//brillo_G = 999;
+			//brillo_B = 0;
+			HAL_Delay(50);
+		}
+
 		HAL_Delay(1000);
 
 		//Azul (0,0,255)
-		brillo_R = 0;
-		brillo_G = 0;
-		brillo_B = 999;
+		for(i=254;i>=0;i--){
+			//brillo_R = 0;
+			brillo_G = 999*(i/255);
+			brillo_B = 999*(255/(i+1));
+			HAL_Delay(50);
+		}
+
 		HAL_Delay(1000);
 
 		//Añil (75,0,130)
-		brillo_R = 999*75/255;
-		brillo_G = 0;
-		brillo_B = 999*130/255;
+		for(i=0,j=255;i<=75,j>=130;i++,j--){
+			brillo_R = 999*(i/255);
+			//brillo_G = 0;
+			brillo_B = 999*(j/255);
+			HAL_Delay(50);
+		}
 		HAL_Delay(1000);
 
+
 		//Violeta (148,0,211)
-		brillo_R = 999*148/255;
-		brillo_G = 0;
-		brillo_B = 999*211/255;
+		for(i=75,j=130;i<=148,j<=211;i++,j++){
+			brillo_R = 999*(i/255);
+			//brillo_G = 0;
+			brillo_B = 999*(j/255);
+			HAL_Delay(50);
+		}
+
 		HAL_Delay(1000);
 
 	}
