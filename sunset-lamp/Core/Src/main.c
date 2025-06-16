@@ -463,7 +463,7 @@ void modo_ciclo(){
 	switch(sub_modo){
 	case CICLO_1:
 	  // llamar a la función del ciclo 1 (modo arcoíris)
-		modo_arcoiris;
+		modo_arcoiris();
 	  break;
 	case CICLO_2:
 	  // llamar a la función del ciclo 2 (modo discoteca)
@@ -471,7 +471,7 @@ void modo_ciclo(){
 	  break;
 	case CICLO_3:
 	  // llamar a la función del ciclo 3 (modo fuego)
-		modo_fuego
+		modo_fuego();
 	  break;
 	default:break;
 	}
