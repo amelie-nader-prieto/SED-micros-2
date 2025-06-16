@@ -156,6 +156,10 @@ uint32_t NO_VOLATIL CP3_B;
 /* Temporizador */
 TIM_HandleTypeDef htim2;
 
+/* Control ahorro*/
+
+volatile uint8_t ahorro_activo = 0;
+
 
 /* USER CODE END PV */
 
@@ -351,28 +355,36 @@ void modo_ciclo(){
 	default:break;
 	}
 }
-void modo_ahorro(){
-	if (!timer_iniciado)
-	  {
-	    MX_TIM2_Init();                         // Inicializar TIM2
-	    HAL_TIM_Base_Start_IT(&htim2);         // Iniciar con interrupción
-	    timer_iniciado = 1;                    // Iniciado
-	  }
 
-	//Bajar el brillo a la mitad
-	  brillo_R = brillo_R / 2;
-	  brillo_G = brillo_G / 2;
-	  brillo_B = brillo_B / 2;
+void modo_ahorro() {
+    if (!timer_iniciado) {
+        ahorro_activo = 1;
+        MX_TIM2_Init();
+        HAL_TIM_Base_Start_IT(&htim2);
+        timer_iniciado = 1;
+    }
 }
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  if(htim->Instance == TIM2 && modo == AHORRO){
-    HAL_TIM_Base_Stop_IT(&htim2);  // Detiene el temporizador
-    modo = OFF;                    // Apaga la luz
-    sub_modo = NORMAL_W;           // Modo blanco por defecto
-    timer_iniciado = 0;            // Permite reiniciar el temporizador si vuelvo a ahorro
-  }
+    if(htim->Instance == TIM2 && modo == AHORRO && ahorro_activo)
+    {
+        // Si el brillo sigue siendo mayor que 0, reducirlo gradualmente
+        if (brillo_R > 10) brillo_R -= 10; else brillo_R = 0;
+        if (brillo_G > 10) brillo_G -= 10; else brillo_G = 0;
+        if (brillo_B > 10) brillo_B -= 10; else brillo_B = 0;
+
+        // Si los tres canales están apagados, termina modo ahorro
+        if (brillo_R == 0 && brillo_G == 0 && brillo_B == 0)
+        {
+            HAL_TIM_Base_Stop_IT(&htim2);
+            modo = OFF;
+            sub_modo = NORMAL_W;
+            timer_iniciado = 0;
+            ahorro_activo = 0;
+        }
+    }
 }
+
 
 
 void modo_config(){
@@ -534,13 +546,14 @@ void state_decod(){
 
 			  break;
 
+
 		  case AHORRO:
 			  /* Función del modo ahorro */
-			  modo_ahorro();
-			  /* Ajuste del brillo */
-			  ajuste_brillo();
+		      modo_ahorro();
+		      /* brillo actual*/
+		      factor_brillo = 1.0;
+		      break;
 
-			  break;
 
 		  case CONFIG_COLOR:
 			  // llamar a la función de configuración del color
@@ -938,7 +951,7 @@ void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 8399;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 99999;
+  htim2.Init.Period = 999;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 
@@ -959,6 +972,7 @@ void MX_TIM2_Init(void)
   HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(TIM2_IRQn);
 }
+
 
 /**
   * @brief GPIO Initialization Function
