@@ -350,7 +350,7 @@ void modo_arcoiris(){
 		 */
 		//Rojo (255,0,0)
 
-		uint8_t i;
+		uint8_t i,j;
 
 		brillo_R = 999;
 		brillo_G = 0;
