@@ -9,6 +9,7 @@
 		<item key="selection" value="Callback"/>
 		<list key="findhistory">
 			<item value="callback"/>
+			<item value="ca"/>
 			<item value="leer_"/>
 			<item value="HAL_TIM_PWM_Init"/>
 		</list>
