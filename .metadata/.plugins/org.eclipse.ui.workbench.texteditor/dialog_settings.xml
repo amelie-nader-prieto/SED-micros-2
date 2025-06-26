@@ -6,8 +6,9 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="leer_"/>
+		<item key="selection" value="Callback"/>
 		<list key="findhistory">
+			<item value="callback"/>
 			<item value="leer_"/>
 			<item value="HAL_TIM_PWM_Init"/>
 		</list>

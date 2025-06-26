@@ -140,6 +140,10 @@ volatile uint32_t brillo_R = 666; // Intensidad del canal rojo (0-999)
 volatile uint32_t brillo_G = 666; // Intensidad del canal verde (0-999)
 volatile uint32_t brillo_B = 666; // Intensidad del canal azul (0-999)
 
+/* Variables para los modos de ciclo */
+volatile uint32_t hue1 = 0;
+volatile uint32_t instante_anterior1;
+
 /* Variables no volátiles */
 uint32_t NO_VOLATIL CP1_R;
 uint32_t NO_VOLATIL CP1_G;
@@ -189,6 +193,8 @@ void state_decod();
 
 /* Prototipo de inicialización del temporizador*/
 void MX_TIM2_Init(void);
+
+void obtener_valores_rgb(uint32_t h);
 
 /* USER CODE END PFP */
 
@@ -343,83 +349,15 @@ void modo_normal(){
 }
 
 void modo_arcoiris(){
-	while (CICLO_1){
-		/*Se realizarán los cambios de colores en base a los
-		 * colores del arcoiris: rojo, naranja, amarillo, verde,
-		 * azul, añil y violeta
-		 */
-		//Rojo (255,0,0)
+	if(sub_modo!=CICLO_1) return;
 
-		uint8_t i,j;
+	obtener_valores_rgb(hue1);
 
-		brillo_R = 999;
-		brillo_G = 0;
-		brillo_B = 0;
-		HAL_Delay(1000);
-
-		//para obtener un cambio progresivo se utiliza el bucle for
-		//cambiando así cada brillo y ajustandolo al del siguiente color
-
-		//Naranja (255,165,0)
-
-		for(i=0;i<=165;i++){
-			//brillo_R = 999;
-			brillo_G = 999*(i/255);
-			//brillo_B = 0;
-			HAL_Delay(50);
-		}
-		HAL_Delay(1000);
-
-		//Amarillo (255,255,0)
-		for(i=165;i<=255;i++){
-			//brillo_R = 999;
-			brillo_G = 999*(i/255);
-			//brillo_B = 0;
-			HAL_Delay(50);
-		}
-
-		HAL_Delay(1000);
-
-		//Verde (0,255,0)
-		for(i=255;i>=0;i--){
-			brillo_R = 999*(i/255);
-			//brillo_G = 999;
-			//brillo_B = 0;
-			HAL_Delay(50);
-		}
-
-		HAL_Delay(1000);
-
-		//Azul (0,0,255)
-		for(i=254;i>=0;i--){
-			//brillo_R = 0;
-			brillo_G = 999*(i/255);
-			brillo_B = 999*(255/(i+1));
-			HAL_Delay(50);
-		}
-
-		HAL_Delay(1000);
-
-		//Añil (75,0,130)
-		for(i=0,j=255;i<=75,j>=130;i++,j--){
-			brillo_R = 999*(i/255);
-			//brillo_G = 0;
-			brillo_B = 999*(j/255);
-			HAL_Delay(50);
-		}
-		HAL_Delay(1000);
-
-
-		//Violeta (148,0,211)
-		for(i=75,j=130;i<=148,j<=211;i++,j++){
-			brillo_R = 999*(i/255);
-			//brillo_G = 0;
-			brillo_B = 999*(j/255);
-			HAL_Delay(50);
-		}
-
-		HAL_Delay(1000);
-
+	uint32_t instante_actual = HAL_GetTick();
+	if(instante_actual - instante_anterior1 >= 150){
+		if(hue1==360) hue1=0;
+		else hue1+=1;
+		instante_anterior1 = instante_actual;
 	}
 }
 
@@ -431,18 +369,22 @@ void modo_discoteca(){
 	Green=brillo_G;
 	Blue=brillo_B;
 
+
+
+	if(sub_modo!=CICLO_2) return;
+
 	while(CICLO_2){
 		brillo_R=0;
 		brillo_G=0;
 		brillo_B=0;
 
-		HAL_Delay(1000);
+		//HAL_Delay(1000);
 
 		brillo_R=Red;
 		brillo_G=Green;
 		brillo_B=Blue;
 
-		HAL_Delay(2000);
+		//HAL_Delay(2000);
 	}
 
 }
@@ -505,8 +447,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         }
     }
 }
-
-
 
 void modo_config(){
 	brillo_R = scale(leer_canal_adc(CANAL_POTR));
@@ -573,6 +513,7 @@ void state_decod(){
 			  if(modo == NORMAL) modo = CICLO;
 			  if(modo == CICLO) sub_modo = CICLO_1;
 			  entrada = EVENT_NONE;
+			  hue1 = 0;
 			  break;
 
 		  case EVENT_CICLO2:
@@ -688,7 +629,6 @@ void state_decod(){
 		  }
 
 }
-
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
@@ -812,6 +752,26 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     		last_tick = now;
     	}
     }
+}
+
+void obtener_valores_rgb(uint32_t h){
+	if(h>360) return;
+
+	if(h<120){
+		brillo_R = 999 - h*(999/120);
+		brillo_G = h*(999/120);
+		brillo_B = 0;
+	}
+	else if(h<=240){
+		brillo_R = 0;
+		brillo_G = 999 - (h-120)*(999/120);
+		brillo_B = (h-120)*(999/120);
+	}
+	else{
+		brillo_R = (h-240)*(999/120);
+		brillo_G = 0;
+		brillo_B = 999 - (h-240)*(999/120);
+	}
 }
 
 /* USER CODE END 0 */
