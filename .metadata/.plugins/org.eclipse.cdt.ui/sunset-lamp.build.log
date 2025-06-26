@@ -1,10 +1,10 @@
-15:52:32 **** Incremental Build of configuration Debug for project sunset-lamp ****
+16:18:45 **** Incremental Build of configuration Debug for project sunset-lamp ****
 make -j8 all 
 arm-none-eabi-size  sunset-lamp.elf 
    text	   data	    bss	    dec	    hex	filename
-  17404	     28	   1888	  19320	   4b78	sunset-lamp.elf
+  17488	     32	   1892	  19412	   4bd4	sunset-lamp.elf
 Finished building: default.size.stdout
  
 
-15:52:32 Build Finished. 0 errors, 0 warnings. (took 193ms)
+16:18:45 Build Finished. 0 errors, 0 warnings. (took 244ms)
 

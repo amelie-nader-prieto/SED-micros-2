@@ -144,8 +144,6 @@ volatile uint32_t brillo_B = 666; // Intensidad del canal azul (0-999)
 volatile uint32_t hue1 = 0;
 volatile uint32_t instante_anterior1;
 volatile uint32_t instante_anterior2;
-volatile uint32_t estado_ciclo2 = 1;
-volatile uint32_t duracion_ciclo2;
 
 /* Variables no volátiles */
 uint32_t NO_VOLATIL CP1_R;
@@ -366,33 +364,26 @@ void modo_arcoiris(){
 
 
 void modo_discoteca(){
-	if(sub_modo!=CICLO_2) return;
-
 	//La luz parpadea cada 2 segundos y se mantiene apagada 1
 	uint16_t Red,Green,Blue;
-	//Red=brillo_R;
-	//Green=brillo_G;
-	//Blue=brillo_B;
+	Red=brillo_R;
+	Green=brillo_G;
+	Blue=brillo_B;
 
-	if(estado_ciclo2==1){
-		// encender la luz 2 segundos
-		duracion_ciclo2 = 2000;
-		brillo_R = 999;//Red;
-		brillo_G = 999;//Green;
-		brillo_B = 999;//Blue;
-	}
-	else{
-		// apagar 1 segundo
-		duracion_ciclo2 = 1000;
-		brillo_R = 0;
-		brillo_G = 0;
-		brillo_B = 0;
-	}
+	if(sub_modo!=CICLO_2) return;
 
-	uint32_t instante_actual = HAL_GetTick();
-	if(instante_actual - instante_anterior2 >= duracion_ciclo2){
-		estado_ciclo2 = (estado_ciclo2==0)? 1:0;
-		instante_anterior2 = instante_actual;
+	while(CICLO_2){
+		brillo_R=0;
+		brillo_G=0;
+		brillo_B=0;
+
+		//HAL_Delay(1000);
+
+		brillo_R=Red;
+		brillo_G=Green;
+		brillo_B=Blue;
+
+		//HAL_Delay(2000);
 	}
 
 }
@@ -528,7 +519,6 @@ void state_decod(){
 			  if(modo == NORMAL) modo = CICLO;
 			  if(modo == CICLO) sub_modo = CICLO_2;
 			  entrada = EVENT_NONE;
-			  estado_ciclo2 = 1;
 			  break;
 
 		  case EVENT_CICLO3:
