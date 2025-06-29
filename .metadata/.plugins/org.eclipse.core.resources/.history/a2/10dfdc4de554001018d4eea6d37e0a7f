@@ -121,6 +121,7 @@ typedef enum{
 ADC_HandleTypeDef hadc1;
 
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
 
@@ -143,6 +144,12 @@ volatile uint32_t brillo_B = 666; // Intensidad del canal azul (0-999)
 /* Variables para los modos de ciclo */
 volatile uint32_t hue1 = 0;
 volatile uint32_t instante_anterior1;
+volatile uint32_t instante_anterior2;
+volatile uint32_t estado_ciclo2 = 1;
+volatile uint32_t duracion_ciclo2;
+volatile float intensidad_ciclo3 = 0.25;
+volatile float avance_ciclo3 = 0.05;
+volatile uint32_t instante_anterior3;
 
 /* Variables no volátiles */
 uint32_t NO_VOLATIL CP1_R;
@@ -158,7 +165,7 @@ uint32_t NO_VOLATIL CP3_G;
 uint32_t NO_VOLATIL CP3_B;
 
 /* Temporizador */
-TIM_HandleTypeDef htim2;
+//TIM_HandleTypeDef htim2;
 
 /* Control ahorro*/
 
@@ -172,6 +179,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_ADC1_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* Gestión de las entradas analógicas */
@@ -192,7 +200,7 @@ void modo_config();
 void state_decod();
 
 /* Prototipo de inicialización del temporizador*/
-void MX_TIM2_Init(void);
+//void MX_TIM2_Init(void);
 
 void obtener_valores_rgb(uint32_t h);
 
@@ -363,37 +371,59 @@ void modo_arcoiris(){
 
 
 void modo_discoteca(){
-	//La luz parpadea cada 2 segundos y se mantiene apagada 1
-	uint16_t Red,Green,Blue;
-	Red=brillo_R;
-	Green=brillo_G;
-	Blue=brillo_B;
-
-
-
 	if(sub_modo!=CICLO_2) return;
 
-	while(CICLO_2){
-		brillo_R=0;
-		brillo_G=0;
-		brillo_B=0;
+	//La luz parpadea cada 2 segundos y se mantiene apagada 1
+	uint16_t Red,Green,Blue;
+	//Red=brillo_R;
+	//Green=brillo_G;
+	//Blue=brillo_B;
 
-		//HAL_Delay(1000);
+	if(estado_ciclo2==1){
+		// encender la luz 2 segundos
+		duracion_ciclo2 = 2000;
+		brillo_R = 999;//Red;
+		brillo_G = 999;//Green;
+		brillo_B = 999;//Blue;
+	}
+	else{
+		// apagar 1 segundo
+		duracion_ciclo2 = 1000;
+		brillo_R = 0;
+		brillo_G = 0;
+		brillo_B = 0;
+	}
 
-		brillo_R=Red;
-		brillo_G=Green;
-		brillo_B=Blue;
-
-		//HAL_Delay(2000);
+	uint32_t instante_actual = HAL_GetTick();
+	if(instante_actual - instante_anterior2 >= duracion_ciclo2){
+		estado_ciclo2 = (estado_ciclo2==0)? 1:0;
+		instante_anterior2 = instante_actual;
 	}
 
 }
 
 void modo_fuego(){
+	if(sub_modo!=CICLO_3) return;
+
 	//Se tiene que poner la luz de un rojo cada vez más intenso
 	uint8_t i;
 	brillo_G=0;
 	brillo_B=0;
+	brillo_R = intensidad_ciclo3 * 999;
+
+	uint32_t instante_actual = HAL_GetTick();
+	if(instante_actual - instante_anterior3 >= 250){
+		if(intensidad_ciclo3>=1){
+			avance_ciclo3 = (avance_ciclo3==0.0)?-0.01:0.0;
+		}
+		if(intensidad_ciclo3<=0.05){
+			avance_ciclo3 = 0.01;
+		}
+		intensidad_ciclo3 += avance_ciclo3;
+		instante_anterior3 = instante_actual;
+	}
+
+	return;
 
 	for(i=0;i<=255;i++)
 	{
@@ -513,7 +543,6 @@ void state_decod(){
 			  if(modo == NORMAL) modo = CICLO;
 			  if(modo == CICLO) sub_modo = CICLO_1;
 			  entrada = EVENT_NONE;
-			  /* Se resetea el color */
 			  hue1 = 0;
 			  break;
 
@@ -521,18 +550,22 @@ void state_decod(){
 			  if(modo == NORMAL) modo = CICLO;
 			  if(modo == CICLO) sub_modo = CICLO_2;
 			  entrada = EVENT_NONE;
+			  estado_ciclo2 = 1;
 			  break;
 
 		  case EVENT_CICLO3:
 			  if(modo == NORMAL) modo = CICLO;
 			  if(modo == CICLO) sub_modo = CICLO_3;
 			  entrada = EVENT_NONE;
+			  intensidad_ciclo3 = 0.25;
 			  break;
 
 		  case EVENT_MODO_AHORRO:
 			  if(modo == NORMAL) modo = AHORRO;
 			  else modo = NORMAL;
 			  entrada = EVENT_NONE;
+			  timer_iniciado = 0;
+			  ahorro_activo = 0;
 			  break;
 
 		  case EVENT_CONFIG_COLOR:
@@ -613,15 +646,15 @@ void state_decod(){
 		  case AHORRO:
 			  /* Función del modo ahorro */
 		      modo_ahorro();
-		      /* brillo actual*/
-		      factor_brillo = 1.0;
+		      /* Ajuste del brillo */
+		      ajuste_brillo();
 		      break;
 
 
 		  case CONFIG_COLOR:
 			  // llamar a la función de configuración del color
 			  modo_config();
-			  /* Ajute del brillo */
+			  /* Ajuste del brillo */
 			  factor_brillo = 1;
 
 			  break;
@@ -808,6 +841,7 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM1_Init();
   MX_ADC1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
   //HAL_TIM_PWM_Init(&htim1);
@@ -1020,41 +1054,64 @@ static void MX_TIM1_Init(void)
   HAL_TIM_MspPostInit(&htim1);
 
 }
-void MX_TIM2_Init(void)
+
+/**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
 {
+
   /* USER CODE BEGIN TIM2_Init 0 */
+
   /* USER CODE END TIM2_Init 0 */
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM2_Init 1 */
-  /* USER CODE END TIM2_Init 1 */
 
+  /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 8399;
+  htim2.Init.Prescaler = 15999;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 999;
+  htim2.Init.Period = 1000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
   {
     Error_Handler();
   }
-
   sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
   if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
   {
     Error_Handler();
   }
-
+  if (HAL_TIM_OC_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_TIMING;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_OC_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM2_Init 2 */
+
   /* USER CODE END TIM2_Init 2 */
 
-  HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(TIM2_IRQn);
 }
-
 
 /**
   * @brief GPIO Initialization Function
@@ -1087,8 +1144,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PC6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_6;
+  /*Configure GPIO pins : PC6 PC10 PC11 */
+  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_10|GPIO_PIN_11;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);

@@ -148,6 +148,7 @@ volatile uint32_t instante_anterior2;
 volatile uint32_t estado_ciclo2 = 1;
 volatile uint32_t duracion_ciclo2;
 volatile float intensidad_ciclo3 = 0.25;
+volatile float avance_ciclo3 = 0.01;
 volatile uint32_t instante_anterior3;
 
 /* Variables no volátiles */
@@ -405,24 +406,22 @@ void modo_fuego(){
 	if(sub_modo!=CICLO_3) return;
 
 	//Se tiene que poner la luz de un rojo cada vez más intenso
-	uint8_t i;
-	brillo_G=0;
+	brillo_G = intensidad_ciclo3 * 100;
 	brillo_B=0;
-	brillo_R = intensidad_ciclo3 * 999;
+	brillo_R = intensidad_ciclo3 * 900;
 
 	uint32_t instante_actual = HAL_GetTick();
-	if(instante_actual - instante_anterior3 >= 500){
-		if(intensidad_ciclo3>=1) intensidad_ciclo3 = 0.25;
-		else intensidad_ciclo3 += 0.05;
+	if(instante_actual - instante_anterior3 >= 150){
+		if(intensidad_ciclo3>=1){
+			avance_ciclo3 = (avance_ciclo3==0.0)?-0.01:0.0;
+		}
+		if(intensidad_ciclo3<=0.25){
+			avance_ciclo3 = 0.01;
+		}
+		intensidad_ciclo3 += avance_ciclo3;
 		instante_anterior3 = instante_actual;
 	}
 
-	return;
-
-	for(i=0;i<=255;i++)
-	{
-		if(brillo_R<=brillo_R*i/255) brillo_R=brillo_R*i/255;
-	}
 }
 
 void modo_ciclo(){
@@ -552,6 +551,7 @@ void state_decod(){
 			  if(modo == CICLO) sub_modo = CICLO_3;
 			  entrada = EVENT_NONE;
 			  intensidad_ciclo3 = 0.25;
+			  avance_ciclo3 = 0.01;
 			  break;
 
 		  case EVENT_MODO_AHORRO:
